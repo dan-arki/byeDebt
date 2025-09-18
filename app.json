@@ -7,6 +7,11 @@
     "icon": "./assets/images/logoByeDebt.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./assets/images/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#F9FAFB"
+    },
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,

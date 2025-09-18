@@ -2,10 +2,14 @@ import { useEffect } from 'react';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { View, ActivityIndicator, StyleSheet } from 'react-native';
+import * as SplashScreen from 'expo-splash-screen';
 import { useFrameworkReady } from '@/hooks/useFrameworkReady';
 import { useAuth } from '@/hooks/useAuth';
 import { AccessibilityService } from '../utils/accessibility';
 import { router } from 'expo-router';
+
+// Prevent the splash screen from auto-hiding before asset loading is complete
+SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   useFrameworkReady();
@@ -19,6 +23,9 @@ export default function RootLayout() {
   // Handle navigation when authentication state changes
   useEffect(() => {
     if (!isLoading) {
+      // Hide splash screen once auth state is determined
+      SplashScreen.hideAsync();
+      
       if (!isAuthenticated && !hasSkippedAuth) {
         // User is not authenticated and hasn't skipped - show onboarding
         router.replace('/(onboarding)/intro');

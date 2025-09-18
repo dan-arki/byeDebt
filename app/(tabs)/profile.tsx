@@ -275,6 +275,21 @@ export default function ProfileScreen() {
             </View>
             <ChevronRight size={16} color="#C1C8CD" strokeWidth={2} />
           </TouchableOpacity>
+          <TouchableOpacity 
+            style={styles.menuItem}
+            onPress={() => {
+              HapticService.light();
+              router.push('/(tabs)/settings');
+            }}
+          >
+            <View style={styles.menuLeft}>
+              <View style={[styles.menuIcon, { backgroundColor: '#F0F2F5' }]}>
+                <Settings size={20} color="#5B616E" strokeWidth={2} />
+              </View>
+              <Text style={styles.menuText}>Settings</Text>
+            </View>
+            <ChevronRight size={16} color="#C1C8CD" strokeWidth={2} />
+          </TouchableOpacity>
 
           <TouchableOpacity style={styles.menuItem}>
             <View style={styles.menuLeft}>
