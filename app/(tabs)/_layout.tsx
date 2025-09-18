@@ -65,6 +65,9 @@ function CustomTabBar({ state, descriptors, navigation, onAddPress }: any) {
     }
   };
 
+  // Filter out the add-placeholder route for rendering
+  const visibleRoutes = state.routes.filter(route => route.name !== 'add-placeholder');
+
   return (
     <View style={{
       position: 'absolute',
@@ -77,7 +80,7 @@ function CustomTabBar({ state, descriptors, navigation, onAddPress }: any) {
       paddingHorizontal: 8,
       flexDirection: 'row',
       alignItems: 'center',
-      justifyContent: 'space-around',
+      justifyContent: 'space-between',
       shadowColor: '#000000',
       shadowOffset: {
         width: 0,
@@ -89,53 +92,12 @@ function CustomTabBar({ state, descriptors, navigation, onAddPress }: any) {
       borderWidth: 1,
       borderColor: '#F0F2F5',
     }}>
-      {state.routes.map((route: any, index: number) => {
+      {/* First two tabs */}
+      {visibleRoutes.slice(0, 2).map((route: any, index: number) => {
         const { options } = descriptors[route.key];
-        const isFocused = state.index === index;
+        const originalIndex = state.routes.findIndex(r => r.key === route.key);
+        const isFocused = state.index === originalIndex;
 
-        const onPress = () => {
-          const event = navigation.emit({
-            type: 'tabPress',
-            target: route.key,
-            canPreventDefault: true,
-          });
-
-          if (!isFocused && !event.defaultPrevented) {
-            navigation.navigate(route.name, route.params);
-          }
-        };
-
-        // Add button in the center (index 2)
-        if (index === 2) {
-          return (
-            <AnimatedTouchable
-              key="add-button"
-              style={[{
-                width: 56,
-                height: 56,
-                borderRadius: 28,
-                backgroundColor: '#1652F0',
-                justifyContent: 'center',
-                alignItems: 'center',
-                shadowColor: '#1652F0',
-                shadowOffset: {
-                  width: 0,
-                  height: 4,
-                },
-                shadowOpacity: 0.3,
-                shadowRadius: 8,
-                elevation: 8,
-                marginHorizontal: 4,
-              }, addButtonStyle]}
-              onPress={handleAddPress}
-              activeOpacity={0.8}
-            >
-              <Plus size={24} color="#FFFFFF" strokeWidth={2.5} />
-            </AnimatedTouchable>
-          );
-        }
-
-        // Regular tab button
         return (
           <TouchableOpacity
             key={route.key}
@@ -144,10 +106,70 @@ function CustomTabBar({ state, descriptors, navigation, onAddPress }: any) {
             accessibilityLabel={options.tabBarAccessibilityLabel}
             onPress={() => handleTabPress(route, isFocused, navigation)}
             style={{
-              flex: 1,
               alignItems: 'center',
               paddingVertical: 12,
-              paddingHorizontal: 8,
+              paddingHorizontal: 16,
+              minWidth: 60,
+            }}
+            activeOpacity={0.7}
+          >
+            <View style={{
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+              {options.tabBarIcon && options.tabBarIcon({
+                size: 24,
+                color: isFocused ? '#1652F0' : '#8E9297',
+                focused: isFocused,
+              })}
+            </View>
+          </TouchableOpacity>
+        );
+      })}
+
+      {/* Add button in the center */}
+      <AnimatedTouchable
+        style={[{
+          width: 56,
+          height: 56,
+          borderRadius: 28,
+          backgroundColor: '#1652F0',
+          justifyContent: 'center',
+          alignItems: 'center',
+          shadowColor: '#1652F0',
+          shadowOffset: {
+            width: 0,
+            height: 4,
+          },
+          shadowOpacity: 0.3,
+          shadowRadius: 8,
+          elevation: 8,
+          marginHorizontal: 8,
+        }, addButtonStyle]}
+        onPress={handleAddPress}
+        activeOpacity={0.8}
+      >
+        <Plus size={24} color="#FFFFFF" strokeWidth={2.5} />
+      </AnimatedTouchable>
+
+      {/* Last two tabs */}
+      {visibleRoutes.slice(2).map((route: any, index: number) => {
+        const { options } = descriptors[route.key];
+        const originalIndex = state.routes.findIndex(r => r.key === route.key);
+        const isFocused = state.index === originalIndex;
+
+        return (
+          <TouchableOpacity
+            key={route.key}
+            accessibilityRole="button"
+            accessibilityState={isFocused ? { selected: true } : {}}
+            accessibilityLabel={options.tabBarAccessibilityLabel}
+            onPress={() => handleTabPress(route, isFocused, navigation)}
+            style={{
+              alignItems: 'center',
+              paddingVertical: 12,
+              paddingHorizontal: 16,
+              minWidth: 60,
             }}
             activeOpacity={0.7}
           >
