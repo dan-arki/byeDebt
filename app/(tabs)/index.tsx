@@ -36,6 +36,10 @@ export default function HomeScreen() {
   const { debts, loading, error } = useDebts();
   const { user } = useAuth();
   const { contacts } = useContacts();
+  
+  // Calculate dynamic data based on fetched debts
+  const currentUserName = user?.name || 'You';
+  
   const [fontsLoaded] = useFonts({
     'Inter-Regular': Inter_400Regular,
     'Inter-Medium': Inter_500Medium,
@@ -102,8 +106,6 @@ export default function HomeScreen() {
     HapticService.light();
     router.push({ pathname: '/(tabs)/debts', params: { type: 'owed' } });
   };
-  // Calculate dynamic data based on fetched debts
-  const currentUserName = user?.name || 'You';
   
   const totalOwing = debts
     .filter(debt => debt.debtorName === currentUserName && debt.status !== 'paid')
