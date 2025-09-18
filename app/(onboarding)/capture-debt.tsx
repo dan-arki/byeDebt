@@ -45,7 +45,7 @@ export default function CaptureDebtScreen() {
   const handleCreateDebt = () => {
     if (!personName.trim() || !amount.trim() || parseFloat(amount) <= 0) {
       HapticService.error();
-      Alert.alert('Oops !', 'Merci de remplir au moins le nom et le montant.');
+      Alert.alert('Oops!', 'Please fill in at least the name and amount.');
       return;
     }
 
@@ -71,7 +71,7 @@ export default function CaptureDebtScreen() {
         <TouchableOpacity style={styles.backButton} onPress={handleBack}>
           <ArrowLeft size={24} color="#6B7280" strokeWidth={2} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Ma première dette {debtTypeEmoji}</Text>
+        <Text style={styles.headerTitle}>My first debt {debtTypeEmoji}</Text>
       </View>
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
@@ -79,12 +79,12 @@ export default function CaptureDebtScreen() {
         <Animated.View style={styles.form} entering={FadeIn.delay(200).duration(500)}>
           {/* Person Name */}
           <Animated.View style={styles.inputSection} entering={SlideInUp.delay(300).duration(400)}>
-            <Text style={styles.inputLabel}>Qui {debtTypeText} ?</Text>
+            <Text style={styles.inputLabel}>Who {debtTypeText}?</Text>
             <View style={styles.inputContainer}>
               <User size={20} color="#6B7280" strokeWidth={2} />
               <TextInput
                 style={styles.textInput}
-                placeholder="Nom de la personne"
+                placeholder="Person's name"
                 value={personName}
                 onChangeText={setPersonName}
                 placeholderTextColor="#9CA3AF"
@@ -94,7 +94,7 @@ export default function CaptureDebtScreen() {
 
           {/* Amount */}
           <Animated.View style={styles.inputSection} entering={SlideInUp.delay(400).duration(400)}>
-            <Text style={styles.inputLabel}>Combien ?</Text>
+            <Text style={styles.inputLabel}>How much?</Text>
             <CurrencyAmountInput
               value={amount}
               onChangeText={setAmount}
@@ -105,7 +105,7 @@ export default function CaptureDebtScreen() {
 
           {/* Due Date */}
           <Animated.View style={styles.inputSection} entering={SlideInUp.delay(500).duration(400)}>
-            <Text style={styles.inputLabel}>Pour quand ?</Text>
+            <Text style={styles.inputLabel}>When is it due?</Text>
             <View style={styles.inputContainer}>
               <Calendar size={20} color="#6B7280" strokeWidth={2} />
               <TextInput
@@ -120,7 +120,7 @@ export default function CaptureDebtScreen() {
 
           {/* Category */}
           <Animated.View style={styles.inputSection} entering={SlideInUp.delay(600).duration(400)}>
-            <Text style={styles.inputLabel}>Catégorie</Text>
+            <Text style={styles.inputLabel}>Category</Text>
             <CategorySelector
               selectedCategory={category}
               onSelectCategory={setCategory}
@@ -129,12 +129,12 @@ export default function CaptureDebtScreen() {
 
           {/* Note */}
           <Animated.View style={styles.inputSection} entering={SlideInUp.delay(700).duration(400)}>
-            <Text style={styles.inputLabel}>Note (optionnel)</Text>
+            <Text style={styles.inputLabel}>Note (optional)</Text>
             <View style={[styles.inputContainer, styles.noteContainer]}>
               <FileText size={20} color="#6B7280" strokeWidth={2} />
               <TextInput
                 style={[styles.textInput, styles.noteInput]}
-                placeholder="Ajouter une note..."
+                placeholder="Add a note..."
                 value={note}
                 onChangeText={setNote}
                 multiline
@@ -158,7 +158,7 @@ export default function CaptureDebtScreen() {
           disabled={!personName.trim() || !amount.trim() || parseFloat(amount) <= 0}
           activeOpacity={0.8}
         >
-          <Text style={styles.ctaButtonText}>Créer ma première dette</Text>
+          <Text style={styles.ctaButtonText}>Create my first debt</Text>
         </TouchableOpacity>
       </Animated.View>
     </SafeAreaView>

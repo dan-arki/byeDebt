@@ -118,8 +118,8 @@ export default function RegisterScreen() {
 
           {/* Header */}
           <Animated.View style={styles.header} entering={FadeIn.delay(100).duration(600)}>
-            <Text style={styles.title}>Create account</Text>
-            <Text style={styles.subtitle}>Join thousands of users managing their debts efficiently</Text>
+            <Text style={styles.title}>Create your account</Text>
+            <Text style={styles.subtitle}>Join thousands managing their finances with confidence</Text>
           </Animated.View>
 
           {/* Form */}
@@ -260,8 +260,8 @@ export default function RegisterScreen() {
               style={styles.skipButton}
               onPress={handleSkipAuth}
             >
-              <Text style={styles.skipButtonText}>Continue without account</Text>
-              <Text style={styles.skipSubtext}>You can always create an account later</Text>
+              <Text style={styles.skipButtonText}>Skip for now</Text>
+              <Text style={styles.skipSubtext}>You can create an account anytime</Text>
             </TouchableOpacity>
           </Animated.View>
         </KeyboardAvoidingView>

@@ -53,19 +53,19 @@ export default function IntentScreen() {
         {/* Question Section */}
         <Animated.View style={styles.questionSection} entering={FadeIn.duration(600)}>
           <Animated.Text style={styles.question} entering={SlideInUp.delay(200).duration(500)}>
-            Tu penses à quelqu'un là tout de suite ?
+            Ready to track your first debt?
           </Animated.Text>
           
           <Animated.Text style={styles.subtitle} entering={SlideInUp.delay(400).duration(500)}>
-            Commençons par ta première dette 😅
+            Let's start with your first entry 💰
           </Animated.Text>
         </Animated.View>
 
         {/* Illustration */}
         <Animated.View style={styles.illustrationContainer} entering={FadeIn.delay(600).duration(500)}>
           <View style={styles.illustrationPlaceholder}>
-            <Text style={styles.illustrationEmoji}>🤝</Text>
-            <Text style={styles.illustrationText}>Deux personnes qui s'entraident</Text>
+            <Text style={styles.illustrationEmoji}>📊</Text>
+            <Text style={styles.illustrationText}>Smart debt tracking made simple</Text>
           </View>
         </Animated.View>
 
@@ -81,8 +81,8 @@ export default function IntentScreen() {
                 <TrendingUp size={24} color="#FFFFFF" strokeWidth={2} />
               </View>
               <View style={styles.buttonTextContainer}>
-                <Text style={styles.buttonTitle}>Quelqu'un me doit</Text>
-                <Text style={styles.buttonSubtitle}>Je vais récupérer de l'argent ✅</Text>
+                <Text style={styles.buttonTitle}>Someone owes me</Text>
+                <Text style={styles.buttonSubtitle}>I'll receive money ✅</Text>
               </View>
             </View>
           </TouchableOpacity>
@@ -97,8 +97,8 @@ export default function IntentScreen() {
                 <TrendingDown size={24} color="#FFFFFF" strokeWidth={2} />
               </View>
               <View style={styles.buttonTextContainer}>
-                <Text style={styles.buttonTitle}>Je dois à quelqu'un</Text>
-                <Text style={styles.buttonSubtitle}>Je dois rembourser 💸</Text>
+                <Text style={styles.buttonTitle}>I owe someone</Text>
+                <Text style={styles.buttonSubtitle}>I need to pay back 💸</Text>
               </View>
             </View>
           </TouchableOpacity>

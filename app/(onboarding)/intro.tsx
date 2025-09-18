@@ -41,19 +41,35 @@ export default function IntroScreen() {
           </View>
           
           <Animated.Text style={styles.headline} entering={SlideInUp.delay(200).duration(500)}>
-            Fini les dettes oubliées.
+            Never forget a debt again.
           </Animated.Text>
           
           <Animated.Text style={styles.subtitle} entering={SlideInUp.delay(400).duration(500)}>
-            ByeDebt t'aide à tout suivre, sans stress ni gêne.
+            Track debts effortlessly, stay organized, and maintain great relationships.
           </Animated.Text>
+          
+          {/* Feature highlights */}
+          <Animated.View style={styles.featuresPreview} entering={FadeIn.delay(600).duration(500)}>
+            <View style={styles.featureItem}>
+              <Text style={styles.featureEmoji}>📱</Text>
+              <Text style={styles.featureText}>Smart tracking</Text>
+            </View>
+            <View style={styles.featureItem}>
+              <Text style={styles.featureEmoji}>🔔</Text>
+              <Text style={styles.featureText}>Automatic reminders</Text>
+            </View>
+            <View style={styles.featureItem}>
+              <Text style={styles.featureEmoji}>📊</Text>
+              <Text style={styles.featureText}>Clear analytics</Text>
+            </View>
+          </Animated.View>
         </Animated.View>
 
         {/* Illustration Placeholder */}
         <Animated.View style={styles.illustrationContainer} entering={FadeIn.delay(600).duration(500)}>
           <View style={styles.illustrationPlaceholder}>
-            <Text style={styles.illustrationEmoji}>🤝</Text>
-            <Text style={styles.illustrationText}>Garde le contrôle de tes finances</Text>
+            <Text style={styles.illustrationEmoji}>💰</Text>
+            <Text style={styles.illustrationText}>Take control of your finances</Text>
           </View>
         </Animated.View>
 
@@ -64,7 +80,7 @@ export default function IntroScreen() {
             onPress={handleGetStarted}
             activeOpacity={0.8}
           >
-            <Text style={styles.ctaButtonText}>Je commence</Text>
+            <Text style={styles.ctaButtonText}>Get Started</Text>
           </TouchableOpacity>
         </Animated.View>
       </View>
@@ -150,6 +166,26 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: 'Inter-Medium',
     color: '#4B5563',
+    textAlign: 'center',
+  },
+  featuresPreview: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginTop: 32,
+    paddingHorizontal: 20,
+  },
+  featureItem: {
+    alignItems: 'center',
+    flex: 1,
+  },
+  featureEmoji: {
+    fontSize: 24,
+    marginBottom: 8,
+  },
+  featureText: {
+    fontSize: 12,
+    fontFamily: 'Inter-Medium',
+    color: '#6B7280',
     textAlign: 'center',
   },
   ctaContainer: {

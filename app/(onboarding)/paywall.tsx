@@ -21,7 +21,6 @@ import { HapticService } from '../../services/hapticService';
 export default function PaywallScreen() {
   const { debt, clearDebt } = useOnboarding();
   const { user, skipAuth } = useAuth();
-  const [showAlternativeOffer, setShowAlternativeOffer] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
 
   const [fontsLoaded] = useFonts({
@@ -35,20 +34,21 @@ export default function PaywallScreen() {
     return null;
   }
 
-  const handleUnlockByeDebt = async () => {
+  const handleUnlockLifetimeAccess = async () => {
     if (isProcessing) return;
     
     try {
       setIsProcessing(true);
       HapticService.success();
       
-      // Simulate subscription process
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      // If user is not authenticated, skip auth to proceed
       if (!user) {
-        await skipAuth();
+        // Redirect to registration for account creation
+        router.push('/(auth)/register');
+        return;
       }
+      
+      // Simulate payment process for authenticated users
+      await new Promise(resolve => setTimeout(resolve, 1500));
       
       // Create the debt if we have the data
       if (debt) {
@@ -69,31 +69,27 @@ export default function PaywallScreen() {
       
     } catch (error) {
       HapticService.error();
-      Alert.alert('Erreur', 'Une erreur est survenue. Réessayez.');
+      Alert.alert('Error', 'An error occurred. Please try again.');
     } finally {
       setIsProcessing(false);
     }
   };
 
-  const handleKeepDebts = () => {
-    HapticService.light();
-    setShowAlternativeOffer(true);
-  };
-
-  const handleAlternativeOffer = async () => {
+  const handleStartFreeTrial = async () => {
     if (isProcessing) return;
     
     try {
       setIsProcessing(true);
       HapticService.success();
       
-      // Simulate subscription process
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      // If user is not authenticated, skip auth to proceed
       if (!user) {
-        await skipAuth();
+        // Redirect to registration for account creation
+        router.push('/(auth)/register');
+        return;
       }
+      
+      // Simulate trial activation for authenticated users
+      await new Promise(resolve => setTimeout(resolve, 1500));
       
       // Create the debt if we have the data
       if (debt) {
@@ -110,12 +106,25 @@ export default function PaywallScreen() {
       }
       
       clearDebt();
-      setShowAlternativeOffer(false);
       router.replace('/(tabs)');
       
     } catch (error) {
       HapticService.error();
-      Alert.alert('Erreur', 'Une erreur est survenue. Réessayez.');
+      Alert.alert('Error', 'An error occurred. Please try again.');
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const handleSkipAuth = async () => {
+    try {
+      HapticService.light();
+      await skipAuth();
+      clearDebt();
+      router.replace('/(tabs)');
+    } catch (error) {
+      HapticService.error();
+      Alert.alert('Error', 'An error occurred. Please try again.');
     } finally {
       setIsProcessing(false);
     }
@@ -132,11 +141,11 @@ export default function PaywallScreen() {
           </View>
           
           <Animated.Text style={styles.title} entering={SlideInUp.delay(200).duration(500)}>
-            Règle tes dettes pour de bon.
+            Take control of your debts.
           </Animated.Text>
           
           <Animated.Text style={styles.subtitle} entering={SlideInUp.delay(400).duration(500)}>
-            ByeDebt t'aide à rester carré. Reçois des rappels, suis tout ce qu'on te doit, et dors tranquille.
+            Get smart reminders, track everything you're owed, and sleep peacefully.
           </Animated.Text>
         </Animated.View>
 
@@ -146,48 +155,48 @@ export default function PaywallScreen() {
             <View style={[styles.featureIcon, { backgroundColor: '#A3D5D3' }]}>
               <Bell size={20} color="#FFFFFF" strokeWidth={2} />
             </View>
-            <Text style={styles.featureText}>Rappels intelligents</Text>
+            <Text style={styles.featureText}>Smart reminders</Text>
           </View>
           
           <View style={styles.feature}>
             <View style={[styles.featureIcon, { backgroundColor: '#4A90E2' }]}>
               <BarChart3 size={20} color="#FFFFFF" strokeWidth={2} />
             </View>
-            <Text style={styles.featureText}>Tableau de bord</Text>
+            <Text style={styles.featureText}>Dashboard</Text>
           </View>
           
           <View style={styles.feature}>
             <View style={[styles.featureIcon, { backgroundColor: '#68B684' }]}>
               <Award size={20} color="#FFFFFF" strokeWidth={2} />
             </View>
-            <Text style={styles.featureText}>Score de confiance</Text>
+            <Text style={styles.featureText}>Trust score</Text>
           </View>
           
           <View style={styles.feature}>
             <View style={[styles.featureIcon, { backgroundColor: '#FFB4A2' }]}>
               <Download size={20} color="#FFFFFF" strokeWidth={2} />
             </View>
-            <Text style={styles.featureText}>Export des données</Text>
+            <Text style={styles.featureText}>Data export</Text>
           </View>
         </Animated.View>
 
         {/* Pricing */}
         <Animated.View style={styles.pricingContainer} entering={SlideInUp.delay(800).duration(500)}>
           <View style={styles.pricingCard}>
-            <Text style={styles.pricingTitle}>Choisis ton plan</Text>
+            <Text style={styles.pricingTitle}>Choose your plan</Text>
             
             <View style={styles.pricingOptions}>
               <View style={styles.pricingOption}>
-                <Text style={styles.pricingPrice}>4,99€</Text>
-                <Text style={styles.pricingPeriod}>/ semaine</Text>
+                <Text style={styles.pricingPrice}>$24.99</Text>
+                <Text style={styles.pricingPeriod}>lifetime</Text>
               </View>
               
               <View style={[styles.pricingOption, styles.recommendedOption]}>
                 <View style={styles.recommendedBadge}>
-                  <Text style={styles.recommendedText}>RECOMMANDÉ</Text>
+                  <Text style={styles.recommendedText}>POPULAR</Text>
                 </View>
-                <Text style={styles.pricingPrice}>29,99€</Text>
-                <Text style={styles.pricingPeriod}>à vie</Text>
+                <Text style={styles.pricingPrice}>Free</Text>
+                <Text style={styles.pricingPeriod}>7-day trial</Text>
               </View>
             </View>
           </View>
@@ -198,67 +207,33 @@ export default function PaywallScreen() {
       <Animated.View style={styles.ctaContainer} entering={SlideInUp.delay(1000).duration(500)}>
         <TouchableOpacity
           style={[styles.primaryButton, isProcessing && styles.disabledButton]}
-          onPress={handleUnlockByeDebt}
+          onPress={handleUnlockLifetimeAccess}
           disabled={isProcessing}
           activeOpacity={0.8}
         >
           <Text style={styles.primaryButtonText}>
-            {isProcessing ? 'Activation...' : 'Débloquer ByeDebt'}
+            {isProcessing ? 'Processing...' : 'Unlock Lifetime Access'}
           </Text>
         </TouchableOpacity>
         
         <TouchableOpacity
-          style={styles.secondaryButton}
-          onPress={handleKeepDebts}
+          style={[styles.secondaryButton, isProcessing && styles.disabledButton]}
+          onPress={handleStartFreeTrial}
           disabled={isProcessing}
           activeOpacity={0.8}
         >
-          <Text style={styles.secondaryButtonText}>Je préfère garder mes dettes…</Text>
+          <Text style={styles.secondaryButtonText}>Start 7-day Free Trial</Text>
+        </TouchableOpacity>
+        
+        <TouchableOpacity
+          style={styles.skipButton}
+          onPress={handleSkipAuth}
+          disabled={isProcessing}
+          activeOpacity={0.8}
+        >
+          <Text style={styles.skipButtonText}>Continue without account</Text>
         </TouchableOpacity>
       </Animated.View>
-
-      {/* Alternative Offer Modal */}
-      <Modal
-        visible={showAlternativeOffer}
-        animationType="slide"
-        presentationStyle="pageSheet"
-      >
-        <SafeAreaView style={styles.modalContainer}>
-          <View style={styles.modalHeader}>
-            <Text style={styles.modalTitle}>Offre spéciale ! 🎉</Text>
-            <TouchableOpacity
-              style={styles.closeButton}
-              onPress={() => setShowAlternativeOffer(false)}
-            >
-              <X size={24} color="#6B7280" strokeWidth={2} />
-            </TouchableOpacity>
-          </View>
-          
-          <View style={styles.modalContent}>
-            <Text style={styles.modalSubtitle}>
-              OK, test 3 jours gratuits + offre à 19,99€ à vie
-            </Text>
-            
-            <View style={styles.offerCard}>
-              <Text style={styles.offerTitle}>✨ Offre limitée</Text>
-              <Text style={styles.offerPrice}>19,99€</Text>
-              <Text style={styles.offerPeriod}>à vie</Text>
-              <Text style={styles.offerSavings}>Économise 10€ !</Text>
-            </View>
-            
-            <TouchableOpacity
-              style={[styles.offerButton, isProcessing && styles.disabledButton]}
-              onPress={handleAlternativeOffer}
-              disabled={isProcessing}
-              activeOpacity={0.8}
-            >
-              <Text style={styles.offerButtonText}>
-                {isProcessing ? 'Activation...' : 'Commencer l\'essai gratuit'}
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </SafeAreaView>
-      </Modal>
     </SafeAreaView>
   );
 }
@@ -449,105 +424,17 @@ const styles = StyleSheet.create({
   secondaryButtonText: {
     fontSize: 16,
     fontFamily: 'Inter-Medium',
-    color: '#6B7280',
+    color: '#1652F0',
   },
-  modalContainer: {
-    flex: 1,
-    backgroundColor: '#F9FAFB',
-  },
-  modalHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 24,
-    paddingTop: 20,
-    paddingBottom: 20,
-  },
-  modalTitle: {
-    fontSize: 24,
-    fontFamily: 'Inter-Bold',
-    color: '#1F2937',
-  },
-  closeButton: {
-    width: 40,
-    height: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  modalContent: {
-    flex: 1,
-    paddingHorizontal: 24,
-    alignItems: 'center',
-  },
-  modalSubtitle: {
-    fontSize: 18,
-    fontFamily: 'Inter-SemiBold',
-    color: '#4B5563',
-    textAlign: 'center',
-    marginBottom: 40,
-  },
-  offerCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 20,
-    padding: 32,
-    alignItems: 'center',
-    marginBottom: 40,
-    shadowColor: '#000000',
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 12,
-    elevation: 8,
-    borderWidth: 2,
-    borderColor: '#68B684',
-  },
-  offerTitle: {
-    fontSize: 16,
-    fontFamily: 'Inter-SemiBold',
-    color: '#68B684',
-    marginBottom: 16,
-  },
-  offerPrice: {
-    fontSize: 36,
-    fontFamily: 'Inter-Bold',
-    color: '#1F2937',
-    marginBottom: 4,
-  },
-  offerPeriod: {
-    fontSize: 16,
-    fontFamily: 'Inter-Regular',
-    color: '#6B7280',
-    marginBottom: 12,
-  },
-  offerSavings: {
-    fontSize: 14,
-    fontFamily: 'Inter-SemiBold',
-    color: '#68B684',
-    backgroundColor: '#F0FDF4',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 20,
-  },
-  offerButton: {
-    backgroundColor: '#68B684',
+  skipButton: {
+    backgroundColor: 'transparent',
     borderRadius: 16,
-    paddingVertical: 18,
-    paddingHorizontal: 32,
+    paddingVertical: 12,
     alignItems: 'center',
-    shadowColor: '#68B684',
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
   },
-  offerButtonText: {
-    fontSize: 18,
-    fontFamily: 'Inter-SemiBold',
-    color: '#FFFFFF',
+  skipButtonText: {
+    fontSize: 14,
+    fontFamily: 'Inter-Medium',
+    color: '#6B7280',
   },
 });

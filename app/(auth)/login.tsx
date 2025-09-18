@@ -85,7 +85,7 @@ export default function LoginScreen() {
           {/* Header */}
           <Animated.View style={styles.header} entering={FadeIn.duration(600)}>
             <Text style={styles.title}>Welcome back</Text>
-            <Text style={styles.subtitle}>Sign in to your account to sync your debts across devices</Text>
+            <Text style={styles.subtitle}>Sign in to sync your debts across all your devices</Text>
           </Animated.View>
 
           {/* Form */}
@@ -162,7 +162,7 @@ export default function LoginScreen() {
             {/* Register Link */}
             <TouchableOpacity style={styles.registerLink} onPress={handleRegisterPress}>
               <Text style={styles.registerText}>
-                Don't have an account? <Text style={styles.registerLinkText}>Sign up</Text>
+                New to the app? <Text style={styles.registerLinkText}>Create account</Text>
               </Text>
             </TouchableOpacity>
           </Animated.View>
@@ -179,8 +179,8 @@ export default function LoginScreen() {
               style={styles.skipButton}
               onPress={handleSkipAuth}
             >
-              <Text style={styles.skipButtonText}>Continue without account</Text>
-              <Text style={styles.skipSubtext}>You can always create an account later</Text>
+              <Text style={styles.skipButtonText}>Skip for now</Text>
+              <Text style={styles.skipSubtext}>You can create an account anytime</Text>
             </TouchableOpacity>
           </Animated.View>
         </KeyboardAvoidingView>
