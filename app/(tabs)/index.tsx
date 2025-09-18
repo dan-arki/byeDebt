@@ -43,6 +43,35 @@ export default function HomeScreen() {
     'Inter-Bold': Inter_700Bold,
   });
 
+  // Calculate people who owe you money
+  const peopleWhoOweYou = useMemo(() => {
+    const peopleMap = new Map<string, { name: string; totalAmount: number; contact?: any }>();
+    
+    debts
+      .filter(debt => debt.creditorName === currentUserName && debt.status !== 'paid')
+      .forEach(debt => {
+        const personName = debt.debtorName;
+        const existing = peopleMap.get(personName);
+        const newAmount = (existing?.totalAmount || 0) + debt.amount;
+        
+        // Try to find matching contact
+        const matchingContact = contacts.find(contact => 
+          contact.name.toLowerCase() === personName.toLowerCase() ||
+          `${contact.firstName} ${contact.lastName}`.toLowerCase() === personName.toLowerCase()
+        );
+        
+        peopleMap.set(personName, {
+          name: personName,
+          totalAmount: newAmount,
+          contact: matchingContact
+        });
+      });
+    
+    return Array.from(peopleMap.values())
+      .sort((a, b) => b.totalAmount - a.totalAmount)
+      .slice(0, 6); // Show top 6 people
+  }, [debts, currentUserName, contacts]);
+
   if (!fontsLoaded) {
     return null;
   }
@@ -89,34 +118,6 @@ export default function HomeScreen() {
 
   const recentDebts = debts.slice(0, 4);
 
-  // Calculate people who owe you money
-  const peopleWhoOweYou = useMemo(() => {
-    const peopleMap = new Map<string, { name: string; totalAmount: number; contact?: any }>();
-    
-    debts
-      .filter(debt => debt.creditorName === currentUserName && debt.status !== 'paid')
-      .forEach(debt => {
-        const personName = debt.debtorName;
-        const existing = peopleMap.get(personName);
-        const newAmount = (existing?.totalAmount || 0) + debt.amount;
-        
-        // Try to find matching contact
-        const matchingContact = contacts.find(contact => 
-          contact.name.toLowerCase() === personName.toLowerCase() ||
-          `${contact.firstName} ${contact.lastName}`.toLowerCase() === personName.toLowerCase()
-        );
-        
-        peopleMap.set(personName, {
-          name: personName,
-          totalAmount: newAmount,
-          contact: matchingContact
-        });
-      });
-    
-    return Array.from(peopleMap.values())
-      .sort((a, b) => b.totalAmount - a.totalAmount)
-      .slice(0, 6); // Show top 6 people
-  }, [debts, currentUserName, contacts]);
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView 
