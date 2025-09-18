@@ -47,8 +47,16 @@ export default function HomeScreen() {
     'Inter-Bold': Inter_700Bold,
   });
 
-  // Calculate people who owe you money
-  const peopleWhoOweYou = useMemo(() => {
+  // Calculate all relevant people with debt relationships
+  const allRelevantPeople = useMemo(() => {
+    const allPeople: Array<{
+      name: string;
+      totalAmount: number;
+      contact?: any;
+      type: 'owed' | 'owe';
+    }> = [];
+    
+    // People who owe you money
     const peopleMap = new Map<string, { name: string; totalAmount: number; contact?: any }>();
     
     debts
@@ -71,41 +79,19 @@ export default function HomeScreen() {
         });
       });
     
-    return Array.from(peopleMap.values())
-      .sort((a, b) => b.totalAmount - a.totalAmount);
-  }, [debts, currentUserName, contacts]);
-
-  // Combine both lists and sort them
-  const allRelevantPeople = useMemo(() => {
-    const combined = [];
-
-    // Add people who owe you
-    peopleWhoOweYou.forEach(person => {
-      combined.push({ ...person, type: 'owed' });
+    // Add people who owe you (type: 'owed')
+    Array.from(peopleMap.values()).forEach(person => {
+      allPeople.push({ ...person, type: 'owed' });
     });
-
-    // Add people you owe
-    peopleIOwe.forEach(person => {
-      combined.push({ ...person, type: 'owe' });
-    });
-
-    // Sort: 'owed' first, then 'owe'. Within each type, sort by amount descending.
-    return combined.sort((a, b) => {
-      if (a.type === 'owed' && b.type === 'owe') return -1;
-      if (a.type === 'owe' && b.type === 'owed') return 1;
-      return b.totalAmount - a.totalAmount;
-    });
-  }, [debts, currentUserName, contacts]);
-
-  // Calculate people I owe money to
-  const peopleIOwe = useMemo(() => {
-    const peopleMap = new Map<string, { name: string; totalAmount: number; contact?: any }>();
+    
+    // People you owe money to
+    const peopleIOweMap = new Map<string, { name: string; totalAmount: number; contact?: any }>();
     
     debts
       .filter(debt => debt.debtorName === currentUserName && debt.status !== 'paid')
       .forEach(debt => {
         const personName = debt.creditorName;
-        const existing = peopleMap.get(personName);
+        const existing = peopleIOweMap.get(personName);
         const newAmount = (existing?.totalAmount || 0) + debt.amount;
         
         // Try to find matching contact
@@ -114,17 +100,31 @@ export default function HomeScreen() {
           `${contact.firstName} ${contact.lastName}`.toLowerCase() === personName.toLowerCase()
         );
         
-        peopleMap.set(personName, {
+        peopleIOweMap.set(personName, {
           name: personName,
           totalAmount: newAmount,
           contact: matchingContact
         });
       });
     
-    return Array.from(peopleMap.values())
+    // Add people you owe (type: 'owe')
+    Array.from(peopleIOweMap.values()).forEach(person => {
+      allPeople.push({ ...person, type: 'owe' });
+    });
+    
+    // Sort: first people who owe you (owed), then people you owe (owe)
+    // Within each group, sort by amount descending
+    return allPeople
+      .sort((a, b) => {
+        if (a.type !== b.type) {
+          return a.type === 'owed' ? -1 : 1; // 'owed' comes first
+        }
+        return b.totalAmount - a.totalAmount; // Higher amounts first
+      })
       .sort((a, b) => b.totalAmount - a.totalAmount)
       .slice(0, 6); // Show top 6 people
   }, [debts, currentUserName, contacts]);
+  
   if (!fontsLoaded) {
     return null;
   }
@@ -159,6 +159,11 @@ export default function HomeScreen() {
   const handleNavigateToOweDebts = () => {
     HapticService.light();
     router.push({ pathname: '/(tabs)/debts', params: { type: 'owe' } });
+  };
+  
+  const handleNavigateToAllDebts = () => {
+    HapticService.light();
+    router.push('/(tabs)/debts');
   };
   
   const totalOwing = debts
@@ -232,17 +237,14 @@ export default function HomeScreen() {
           </View>
         </Animated.View>
 
-        {/* People Who Owe You */}
+        {/* Persons Section */}
         {!loading && allRelevantPeople.length > 0 && (
           <Animated.View style={styles.peopleContainer} entering={FadeIn.delay(600).duration(300)}>
             <View style={styles.peopleHeader}>
               <Text style={styles.peopleTitle}>Persons</Text>
               <TouchableOpacity 
                 style={styles.viewAllButton}
-                onPress={() => {
-                  HapticService.light();
-                  router.push('/debts');
-                }}
+                onPress={handleNavigateToAllDebts}
               >
                 <Text style={styles.viewAllText}>View all</Text>
               </TouchableOpacity>
@@ -261,7 +263,10 @@ export default function HomeScreen() {
                     onPress={() => handleNavigateToPerson(person.name)}
                     activeOpacity={0.7}
                   >
-                    <View style={[styles.personAvatar, person.type === 'owed' ? styles.personAvatarGreen : styles.personAvatarRed]}>
+                    <View style={[
+                      styles.personAvatar, 
+                      person.type === 'owed' ? styles.personAvatarGreen : styles.personAvatarRed
+                    ]}>
                       {person.contact?.imageUri ? (
                         <Image 
                           source={{ uri: person.contact.imageUri }} 
@@ -276,7 +281,10 @@ export default function HomeScreen() {
                     <Text style={styles.personName} numberOfLines={1}>
                       {person.name}
                     </Text>
-                    <Text style={[styles.personAmount, person.type === 'owed' ? styles.personAmountGreen : styles.personAmountRed]}>
+                    <Text style={[
+                      styles.personAmount,
+                      person.type === 'owed' ? styles.personAmountGreen : styles.personAmountRed
+                    ]}>
                       {formatAmount(person.totalAmount)}
                     </Text>
                   </TouchableOpacity>
@@ -285,6 +293,8 @@ export default function HomeScreen() {
             </ScrollView>
           </Animated.View>
         )}
+        
+        {/* Recent Activity */}
         <Animated.View style={styles.activityContainer} entering={FadeIn.delay(400).duration(300)}>
           <View style={styles.activityHeader}>
             <Text style={styles.activityTitle}>Recent activity</Text>
@@ -519,11 +529,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 6,
   },
-  viewAllText: {
-    fontSize: 16,
-    fontFamily: 'Inter-Medium',
-    color: '#1652F0',
-  },
   activityItem: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -669,9 +674,13 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     overflow: 'hidden',
     borderWidth: 2,
+    borderColor: 'transparent',
   },
   personAvatarGreen: {
     borderColor: '#00D632',
+  },
+  personAvatarRed: {
+    borderColor: '#FF4747',
   },
   personImage: {
     width: 64,
@@ -697,9 +706,6 @@ const styles = StyleSheet.create({
   },
   personAmountGreen: {
     color: '#00D632',
-  },
-  personAvatarRed: {
-    borderColor: '#FF4747',
   },
   personAmountRed: {
     color: '#FF4747',
