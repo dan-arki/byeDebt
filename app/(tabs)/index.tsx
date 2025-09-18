@@ -274,9 +274,7 @@ export default function HomeScreen() {
                         </Text>
                       </View>
                       <View style={styles.activityInfo}>
-                        <TouchableOpacity onPress={() => handleNavigateToPerson(personName)}>
-                          <Text style={[styles.activityPerson, styles.activityPersonLink]}>{personName}</Text>
-                        </TouchableOpacity>
+                        <Text style={styles.activityPerson}>{personName}</Text>
                         <View style={styles.activityCategoryContainer}>
                           <Text style={styles.activityCategoryEmoji}>
                             {getCategoryEmoji(debt.category || 'Other')}
