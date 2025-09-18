@@ -696,6 +696,8 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     overflow: 'hidden',
     borderWidth: 2,
+  },
+  personAvatarGreen: {
     borderColor: '#00D632',
   },
   personImage: {
@@ -718,8 +720,10 @@ const styles = StyleSheet.create({
   personAmount: {
     fontSize: 14,
     fontFamily: 'Inter-SemiBold',
-    color: '#00D632',
     textAlign: 'center',
+  },
+  personAmountGreen: {
+    color: '#00D632',
   },
   personAvatarRed: {
     borderColor: '#FF4747',
