@@ -396,11 +396,10 @@ export default function DebtDetailScreen() {
             style={[
               styles.actionButton, 
               isRepaid && styles.repaidButton,
-              !isAuthenticated && styles.disabledButton
             ]}
             textStyle={isRepaid ? styles.repaidButtonText : undefined}
             onPress={handleMarkRepaid}
-            disabled={isRepaid || isUpdating || !isAuthenticated}
+            disabled={isRepaid || isUpdating}
             hapticType={HapticType.HEAVY}
           />
         </Animated.View>
