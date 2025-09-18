@@ -23,6 +23,7 @@ import { useCurrency } from '../../hooks/useCurrency';
 import { useAddDebt } from './_layout';
 import { useDebts } from '../../hooks/useDebts';
 import { useAuth } from '../../hooks/useAuth';
+import { useContacts } from '../../hooks/useContacts';
 import AnimatedButton from '../../components/AnimatedButton';
 import AnimatedListItem from '../../components/AnimatedListItem';
 import { HapticService, HapticType } from '../../services/hapticService';
@@ -34,6 +35,7 @@ export default function HomeScreen() {
   const { showAddDebt } = useAddDebt();
   const { debts, loading, error } = useDebts();
   const { user } = useAuth();
+  const { contacts } = useContacts();
   const [fontsLoaded] = useFonts({
     'Inter-Regular': Inter_400Regular,
     'Inter-Medium': Inter_500Medium,
@@ -67,6 +69,10 @@ export default function HomeScreen() {
     router.push({ pathname: '/person-detail', params: { name: personName } });
   };
 
+  const handleNavigateToOwedDebts = () => {
+    HapticService.light();
+    router.push({ pathname: '/(tabs)/debts', params: { type: 'owed' } });
+  };
   // Calculate dynamic data based on fetched debts
   const currentUserName = user?.name || 'You';
   
@@ -83,6 +89,34 @@ export default function HomeScreen() {
 
   const recentDebts = debts.slice(0, 4);
 
+  // Calculate people who owe you money
+  const peopleWhoOweYou = useMemo(() => {
+    const peopleMap = new Map<string, { name: string; totalAmount: number; contact?: any }>();
+    
+    debts
+      .filter(debt => debt.creditorName === currentUserName && debt.status !== 'paid')
+      .forEach(debt => {
+        const personName = debt.debtorName;
+        const existing = peopleMap.get(personName);
+        const newAmount = (existing?.totalAmount || 0) + debt.amount;
+        
+        // Try to find matching contact
+        const matchingContact = contacts.find(contact => 
+          contact.name.toLowerCase() === personName.toLowerCase() ||
+          `${contact.firstName} ${contact.lastName}`.toLowerCase() === personName.toLowerCase()
+        );
+        
+        peopleMap.set(personName, {
+          name: personName,
+          totalAmount: newAmount,
+          contact: matchingContact
+        });
+      });
+    
+    return Array.from(peopleMap.values())
+      .sort((a, b) => b.totalAmount - a.totalAmount)
+      .slice(0, 6); // Show top 6 people
+  }, [debts, currentUserName, contacts]);
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView 
@@ -141,6 +175,56 @@ export default function HomeScreen() {
           </View>
         </Animated.View>
 
+        {/* People Who Owe You */}
+        {!loading && peopleWhoOweYou.length > 0 && (
+          <Animated.View style={styles.peopleContainer} entering={FadeIn.delay(600).duration(300)}>
+            <View style={styles.peopleHeader}>
+              <Text style={styles.peopleTitle}>People who owe you</Text>
+              <TouchableOpacity 
+                style={styles.viewAllButton}
+                onPress={handleNavigateToOwedDebts}
+              >
+                <Text style={styles.viewAllText}>View all</Text>
+              </TouchableOpacity>
+            </View>
+            
+            <ScrollView 
+              horizontal 
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.peopleScrollContent}
+              style={styles.peopleScroll}
+            >
+              {peopleWhoOweYou.map((person, index) => (
+                <AnimatedListItem key={person.name} index={index} delay={50}>
+                  <TouchableOpacity
+                    style={styles.personCard}
+                    onPress={() => handleNavigateToPerson(person.name)}
+                    activeOpacity={0.7}
+                  >
+                    <View style={styles.personAvatar}>
+                      {person.contact?.imageUri ? (
+                        <Image 
+                          source={{ uri: person.contact.imageUri }} 
+                          style={styles.personImage}
+                        />
+                      ) : (
+                        <Text style={styles.personInitials}>
+                          {person.name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                        </Text>
+                      )}
+                    </View>
+                    <Text style={styles.personName} numberOfLines={1}>
+                      {person.name}
+                    </Text>
+                    <Text style={styles.personAmount}>
+                      {formatAmount(person.totalAmount)}
+                    </Text>
+                  </TouchableOpacity>
+                </AnimatedListItem>
+              ))}
+            </ScrollView>
+          </Animated.View>
+        )}
         {/* Recent Activity */}
         <Animated.View style={styles.activityContainer} entering={FadeIn.delay(400).duration(300)}>
           <View style={styles.activityHeader}>
@@ -491,6 +575,67 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontFamily: 'Inter-Regular',
     color: '#5B616E',
+  },
+  peopleContainer: {
+    paddingHorizontal: 20,
+    marginBottom: 40,
+  },
+  peopleHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  peopleTitle: {
+    fontSize: 20,
+    fontFamily: 'Inter-SemiBold',
+    color: '#050F19',
+  },
+  peopleScroll: {
+    marginHorizontal: -20,
+  },
+  peopleScrollContent: {
+    paddingHorizontal: 20,
+    gap: 16,
+  },
+  personCard: {
+    alignItems: 'center',
+    width: 80,
+  },
+  personAvatar: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: '#E8F4FD',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 8,
+    overflow: 'hidden',
+    borderWidth: 2,
+    borderColor: '#00D632',
+  },
+  personImage: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+  },
+  personInitials: {
+    fontSize: 18,
+    fontFamily: 'Inter-Bold',
+    color: '#1652F0',
+  },
+  personName: {
+    fontSize: 12,
+    fontFamily: 'Inter-Medium',
+    color: '#050F19',
+    textAlign: 'center',
+    marginBottom: 4,
+  },
+  personAmount: {
+    fontSize: 14,
+    fontFamily: 'Inter-SemiBold',
+    color: '#00D632',
+    textAlign: 'center',
   },
   emptyStateContainer: {
     alignItems: 'center',

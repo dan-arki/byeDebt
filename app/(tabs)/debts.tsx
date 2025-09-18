@@ -28,6 +28,7 @@ export default function DebtsScreen() {
   const { showAddDebt } = useAddDebt();
   const { debts, loading, error } = useDebts();
   const { user } = useAuth();
+  const params = useLocalSearchParams();
   const [showFilterSheet, setShowFilterSheet] = useState(false);
   const [currentFilters, setCurrentFilters] = useState<DebtFilters>({
     type: 'all',
@@ -41,8 +42,19 @@ export default function DebtsScreen() {
     'Inter-Bold': Inter_700Bold,
   });
 
-  const [activeTab, setActiveTab] = useState<'all' | 'owe' | 'owed'>('all');
+  const [activeTab, setActiveTab] = useState<'all' | 'owe' | 'owed'>(
+    (params.type as 'all' | 'owe' | 'owed') || 'all'
+  );
   const [searchQuery, setSearchQuery] = useState('');
+
+  // Update filters when URL params change
+  useEffect(() => {
+    if (params.type && ['all', 'owe', 'owed'].includes(params.type as string)) {
+      const type = params.type as 'all' | 'owe' | 'owed';
+      setActiveTab(type);
+      setCurrentFilters(prev => ({ ...prev, type }));
+    }
+  }, [params.type]);
 
   if (!fontsLoaded) {
     return null;
