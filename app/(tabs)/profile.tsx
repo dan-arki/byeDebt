@@ -286,15 +286,6 @@ export default function ProfileScreen() {
             <ChevronRight size={16} color="#C1C8CD" strokeWidth={2} />
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.menuItem}>
-            <View style={styles.menuLeft}>
-              <View style={[styles.menuIcon, { backgroundColor: '#F0F2F5' }]}>
-                <Shield size={20} color="#5B616E" strokeWidth={2} />
-              </View>
-              <Text style={styles.menuText}>Privacy & Security</Text>
-            </View>
-            <ChevronRight size={16} color="#C1C8CD" strokeWidth={2} />
-          </TouchableOpacity>
 
           {isAuthenticated ? (
             <TouchableOpacity 
