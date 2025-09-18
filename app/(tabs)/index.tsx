@@ -243,8 +243,8 @@ export default function HomeScreen() {
             <View style={styles.peopleHeader}>
               <Text style={styles.peopleTitle}>Persons</Text>
               <TouchableOpacity 
-                style={styles.viewAllButton}
-                onPress={handleNavigateToAllDebts}
+                style={styles.viewAllButton} // This will navigate to the new /persons screen
+                onPress={() => router.push('/(tabs)/persons')}
               >
                 <Text style={styles.viewAllText}>View all</Text>
               </TouchableOpacity>

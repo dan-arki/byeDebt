@@ -231,6 +231,16 @@ export default function TabLayout() {
             ),
           }}
         />
+        {/* Menu 3: Persons */}
+        <Tabs.Screen
+          name="persons"
+          options={{
+            title: 'Persons',
+            tabBarIcon: ({ size, color }) => (
+              <User size={size} color={color} strokeWidth={2} />
+            ),
+          }}
+        />
         {/* Menu 4: Profile */}
         <Tabs.Screen
           name="profile"
