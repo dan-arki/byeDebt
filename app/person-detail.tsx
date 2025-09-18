@@ -20,7 +20,6 @@ import {
   ChevronRight,
   Clock
 } from 'lucide-react-native';
-import { useFonts, Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_700Bold } from '@expo-google-fonts/inter';
 import { usePersonDebts } from '../hooks/usePersonDebts';
 import { useCategories } from '../hooks/useCategories';
 import { useCurrency } from '../hooks/useCurrency';
@@ -37,17 +36,6 @@ export default function PersonDetailScreen() {
 
   const { debts, summary, loading, error } = usePersonDebts(personName);
   const [activeTab, setActiveTab] = useState<'all' | 'active' | 'paid'>('all');
-
-  const [fontsLoaded] = useFonts({
-    'Inter-Regular': Inter_400Regular,
-    'Inter-Medium': Inter_500Medium,
-    'Inter-SemiBold': Inter_600SemiBold,
-    'Inter-Bold': Inter_700Bold,
-  });
-
-  if (!fontsLoaded) {
-    return null;
-  }
 
   if (!personName) {
     return (

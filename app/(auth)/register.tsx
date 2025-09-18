@@ -15,7 +15,6 @@ import {
 import Animated, { FadeIn, SlideInUp } from 'react-native-reanimated';
 import { Mail, Lock, Eye, EyeOff, User, ArrowRight, ArrowLeft } from 'lucide-react-native';
 import { router } from 'expo-router';
-import { useFonts, Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_700Bold } from '@expo-google-fonts/inter';
 import { useAuth } from '../../hooks/useAuth';
 import AnimatedButton from '../../components/AnimatedButton';
 import { HapticService, HapticType } from '../../services/hapticService';
@@ -29,16 +28,6 @@ export default function RegisterScreen() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [fontsLoaded] = useFonts({
-    'Inter-Regular': Inter_400Regular,
-    'Inter-Medium': Inter_500Medium,
-    'Inter-SemiBold': Inter_600SemiBold,
-    'Inter-Bold': Inter_700Bold,
-  });
-
-  if (!fontsLoaded) {
-    return null;
-  }
 
   const validateForm = () => {
     if (!email || !password || !confirmPassword) {

@@ -10,7 +10,6 @@ import {
 } from 'react-native';
 import Animated, { FadeIn, SlideInRight } from 'react-native-reanimated';
 import { Search, SlidersHorizontal as Filter, ChevronRight } from 'lucide-react-native';
-import { useFonts, Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_700Bold } from '@expo-google-fonts/inter';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useCategories } from '../../hooks/useCategories';
 import { useCurrency } from '../../hooks/useCurrency';
@@ -35,12 +34,6 @@ export default function DebtsScreen() {
     category: null,
     dateRange: 'any',
   });
-  const [fontsLoaded] = useFonts({
-    'Inter-Regular': Inter_400Regular,
-    'Inter-Medium': Inter_500Medium,
-    'Inter-SemiBold': Inter_600SemiBold,
-    'Inter-Bold': Inter_700Bold,
-  });
 
   const [activeTab, setActiveTab] = useState<'all' | 'owe' | 'owed'>(
     (params.type as 'all' | 'owe' | 'owed') || 'all'
@@ -55,10 +48,6 @@ export default function DebtsScreen() {
       setCurrentFilters(prev => ({ ...prev, type }));
     }
   }, [params.type]);
-
-  if (!fontsLoaded) {
-    return null;
-  }
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);

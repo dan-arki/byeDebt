@@ -12,7 +12,6 @@ import {
 import Animated, { FadeIn, SlideInUp } from 'react-native-reanimated';
 import { router } from 'expo-router';
 import { ArrowLeft, User, Calendar, FileText } from 'lucide-react-native';
-import { useFonts, Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_700Bold } from '@expo-google-fonts/inter';
 import { useOnboarding } from '../../contexts/OnboardingContext';
 import CurrencyAmountInput from '../../components/CurrencyAmountInput';
 import CategorySelector from '../../components/CategorySelector';
@@ -25,17 +24,6 @@ export default function CaptureDebtScreen() {
   const [dueDate, setDueDate] = useState(new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]);
   const [category, setCategory] = useState('');
   const [note, setNote] = useState('');
-
-  const [fontsLoaded] = useFonts({
-    'Inter-Regular': Inter_400Regular,
-    'Inter-Medium': Inter_500Medium,
-    'Inter-SemiBold': Inter_600SemiBold,
-    'Inter-Bold': Inter_700Bold,
-  });
-
-  if (!fontsLoaded) {
-    return null;
-  }
 
   const handleBack = () => {
     HapticService.light();

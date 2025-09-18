@@ -3,6 +3,7 @@ import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { View, ActivityIndicator, StyleSheet } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
+import { useFonts, Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_700Bold } from '@expo-google-fonts/inter';
 import { useFrameworkReady } from '@/hooks/useFrameworkReady';
 import { useAuth } from '@/hooks/useAuth';
 import { AccessibilityService } from '../utils/accessibility';
@@ -13,7 +14,15 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   useFrameworkReady();
-  const { isAuthenticated, hasSkippedAuth, isLoading } = useAuth();
+  const { isAuthenticated, hasSkippedAuth, isLoading: isAuthLoading } = useAuth();
+  const [fontsLoaded] = useFonts({
+    'Inter-Regular': Inter_400Regular,
+    'Inter-Medium': Inter_500Medium,
+    'Inter-SemiBold': Inter_600SemiBold,
+    'Inter-Bold': Inter_700Bold,
+  });
+
+  const isAppReady = !isAuthLoading && fontsLoaded;
 
   useEffect(() => {
     // Initialize accessibility settings
@@ -22,25 +31,22 @@ export default function RootLayout() {
 
   // Handle navigation when authentication state changes
   useEffect(() => {
-    if (!isLoading) {
+    if (isAppReady) {
       // Hide splash screen once auth state is determined
       SplashScreen.hideAsync();
       
       if (!isAuthenticated && !hasSkippedAuth) {
         // User is not authenticated and hasn't skipped - show onboarding
         router.replace('/(onboarding)/intro');
-      } else if (!isAuthenticated && hasSkippedAuth) {
-        // User has skipped auth - show main app
-        router.replace('/(tabs)');
-      } else if (isAuthenticated) {
-        // User is authenticated - show main app
+      } else {
+        // User has skipped auth OR is authenticated - show main app
         router.replace('/(tabs)');
       }
     }
-  }, [isAuthenticated, hasSkippedAuth, isLoading]);
+  }, [isAuthenticated, hasSkippedAuth, isAppReady]);
 
   // Show loading screen while checking auth state
-  if (isLoading) {
+  if (!isAppReady) {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#1652F0" />
@@ -48,22 +54,15 @@ export default function RootLayout() {
     );
   }
 
-  // Determine which flow to show
-  const shouldShowOnboarding = !isAuthenticated && !hasSkippedAuth;
-  const shouldShowAuth = false; // We'll handle auth within onboarding if needed
-
   return (
     <>
       <Stack screenOptions={{ headerShown: false }}>
-        {shouldShowOnboarding ? (
-          <Stack.Screen name="(onboarding)" />
-        ) : !isAuthenticated && hasSkippedAuth ? (
-          <Stack.Screen name="(tabs)" />
-        ) : isAuthenticated ? (
-          <Stack.Screen name="(tabs)" />
-        ) : (
-          <Stack.Screen name="(auth)" />
-        )}
+        <Stack.Screen name="(onboarding)" />
+        <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="(auth)" />
+        <Stack.Screen name="debt-detail" />
+        <Stack.Screen name="person-detail" />
+        <Stack.Screen name="settings" />
         <Stack.Screen name="+not-found" />
       </Stack>
       <StatusBar style="auto" />

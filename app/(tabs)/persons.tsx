@@ -13,7 +13,6 @@ import {
 } from 'react-native';
 import Animated, { FadeIn, SlideInRight } from 'react-native-reanimated';
 import { Search, SlidersHorizontal as Filter, ChevronRight, TrendingUp, TrendingDown, X } from 'lucide-react-native';
-import { useFonts, Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_700Bold } from '@expo-google-fonts/inter';
 import { router } from 'expo-router';
 import { useDebts } from '../../hooks/useDebts';
 import { useAuth } from '../../hooks/useAuth';
@@ -47,17 +46,6 @@ function FilterBottomSheetForPersons({ visible, onClose, onApplyFilters, initial
   useEffect(() => {
     setFilters(initialFilters);
   }, [initialFilters]);
-
-  const [fontsLoaded] = useFonts({
-    'Inter-Regular': Inter_400Regular,
-    'Inter-Medium': Inter_500Medium,
-    'Inter-SemiBold': Inter_600SemiBold,
-    'Inter-Bold': Inter_700Bold,
-  });
-
-  if (!fontsLoaded) {
-    return null;
-  }
 
   const handleApply = () => {
     HapticService.medium();
@@ -350,13 +338,6 @@ export default function PersonsScreen() {
   const { contacts } = useContacts();
   const { formatAmount } = useCurrency();
 
-  const [fontsLoaded] = useFonts({
-    'Inter-Regular': Inter_400Regular,
-    'Inter-Medium': Inter_500Medium,
-    'Inter-SemiBold': Inter_600SemiBold,
-    'Inter-Bold': Inter_700Bold,
-  });
-
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilterSheet, setShowFilterSheet] = useState(false);
   const [currentFilters, setCurrentFilters] = useState<{
@@ -475,10 +456,6 @@ export default function PersonsScreen() {
 
   const totalOwedToMe = useMemo(() => allPersonsData.reduce((sum, p) => sum + p.totalOwedToUser, 0), [allPersonsData]);
   const totalUserOwes = useMemo(() => allPersonsData.reduce((sum, p) => sum + p.totalUserOwes, 0), [allPersonsData]);
-
-  if (!fontsLoaded) {
-    return null;
-  }
 
   const handlePersonPress = (personName: string) => {
     HapticService.light();

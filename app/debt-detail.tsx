@@ -21,7 +21,6 @@ import Animated, {
 } from 'react-native-reanimated';
 import { router, useLocalSearchParams } from 'expo-router';
 import { ArrowLeft, MoveHorizontal as MoreHorizontal, CircleCheck as CheckCircle, Calendar, Tag, MessageSquare, Clock, TrendingUp, TrendingDown } from 'lucide-react-native';
-import { useFonts, Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_700Bold } from '@expo-google-fonts/inter';
 import { useCategories } from '../hooks/useCategories';
 import { useCurrency } from '../hooks/useCurrency';
 import AnimatedButton from '../components/AnimatedButton';
@@ -47,13 +46,6 @@ export default function DebtDetailScreen() {
   const [showCompletionAnimation, setShowCompletionAnimation] = useState(false);
   const [isRepaid, setIsRepaid] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
-
-  const [fontsLoaded] = useFonts({
-    'Inter-Regular': Inter_400Regular,
-    'Inter-Medium': Inter_500Medium,
-    'Inter-SemiBold': Inter_600SemiBold,
-    'Inter-Bold': Inter_700Bold,
-  });
 
   // Animation values
   const buttonScale = useSharedValue(1);
@@ -117,7 +109,7 @@ export default function DebtDetailScreen() {
     findDebt();
   }, [debtId, debts, debtsLoading, user?.id, isAuthenticated]);
 
-  if (!fontsLoaded || loading) {
+  if (loading) {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#1652F0" />

@@ -10,7 +10,6 @@ import {
 import Animated, { FadeIn, SlideInUp } from 'react-native-reanimated';
 import { router } from 'expo-router';
 import { ArrowLeft, TrendingUp, TrendingDown } from 'lucide-react-native';
-import { useFonts, Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_700Bold } from '@expo-google-fonts/inter';
 import { useOnboarding } from '../../contexts/OnboardingContext';
 import { HapticService } from '../../services/hapticService';
 
@@ -18,16 +17,6 @@ const { width, height } = Dimensions.get('window');
 
 export default function IntentScreen() {
   const { setDebtType } = useOnboarding();
-  const [fontsLoaded] = useFonts({
-    'Inter-Regular': Inter_400Regular,
-    'Inter-Medium': Inter_500Medium,
-    'Inter-SemiBold': Inter_600SemiBold,
-    'Inter-Bold': Inter_700Bold,
-  });
-
-  if (!fontsLoaded) {
-    return null;
-  }
 
   const handleBack = () => {
     HapticService.light();

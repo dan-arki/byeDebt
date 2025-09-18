@@ -10,7 +10,6 @@ import {
 } from 'react-native';
 import { BarChart, LineChart } from 'react-native-chart-kit';
 import { TrendingUp, TrendingDown, Target, Calendar, ChevronDown, ChevronRight } from 'lucide-react-native';
-import { useFonts, Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_700Bold } from '@expo-google-fonts/inter';
 import { useCategories } from '../../hooks/useCategories';
 import { useCurrency } from '../../hooks/useCurrency';
 import { useDebts } from '../../hooks/useDebts';
@@ -54,12 +53,6 @@ export default function AnalyticsScreen() {
   const { formatAmount } = useCurrency();
   const { debts, loading } = useDebts();
   const { user } = useAuth();
-  const [fontsLoaded] = useFonts({
-    'Inter-Regular': Inter_400Regular,
-    'Inter-Medium': Inter_500Medium,
-    'Inter-SemiBold': Inter_600SemiBold,
-    'Inter-Bold': Inter_700Bold,
-  });
 
   const [selectedPeriod, setSelectedPeriod] = useState('1M');
 
@@ -283,10 +276,6 @@ export default function AnalyticsScreen() {
       isPositive: change >= 0,
     };
   }, [debts, netBalance, selectedPeriod, currentUserName]);
-
-  if (!fontsLoaded) {
-    return null;
-  }
 
   const getCategoryEmoji = (categoryName: string) => {
     const category = categories.find(cat => cat.name === categoryName);

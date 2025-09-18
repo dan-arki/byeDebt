@@ -20,7 +20,6 @@ import {
   Star,
   Award
 } from 'lucide-react-native';
-import { useFonts, Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_700Bold } from '@expo-google-fonts/inter';
 import CurrencySelector from '../../components/CurrencySelector';
 import { useAuth } from '../../hooks/useAuth';
 import { useDebts } from '../../hooks/useDebts';
@@ -33,12 +32,6 @@ export default function ProfileScreen() {
   const { debts, loading: debtsLoading } = useDebts();
   const { formatAmount } = useCurrency();
   const { showAddDebt } = useAddDebt();
-  const [fontsLoaded] = useFonts({
-    'Inter-Regular': Inter_400Regular,
-    'Inter-Medium': Inter_500Medium,
-    'Inter-SemiBold': Inter_600SemiBold,
-    'Inter-Bold': Inter_700Bold,
-  });
 
   // Calculate dynamic statistics
   const statistics = useMemo(() => {
@@ -103,10 +96,6 @@ export default function ProfileScreen() {
     }
     return user.name.substring(0, 2).toUpperCase();
   };
-
-  if (!fontsLoaded) {
-    return null;
-  }
 
   const renderStars = (score: number) => {
     const stars = [];

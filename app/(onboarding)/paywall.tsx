@@ -12,7 +12,6 @@ import {
 import Animated, { FadeIn, SlideInUp } from 'react-native-reanimated';
 import { router } from 'expo-router';
 import { Bell, ChartBar as BarChart3, Award, Download, X, Sparkles } from 'lucide-react-native';
-import { useFonts, Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_700Bold } from '@expo-google-fonts/inter';
 import { useOnboarding } from '../../contexts/OnboardingContext';
 import { useAuth } from '../../hooks/useAuth';
 import { DebtService } from '../../services/debtService';
@@ -22,17 +21,6 @@ export default function PaywallScreen() {
   const { debt, clearDebt } = useOnboarding();
   const { user, skipAuth } = useAuth();
   const [isProcessing, setIsProcessing] = useState(false);
-
-  const [fontsLoaded] = useFonts({
-    'Inter-Regular': Inter_400Regular,
-    'Inter-Medium': Inter_500Medium,
-    'Inter-SemiBold': Inter_600SemiBold,
-    'Inter-Bold': Inter_700Bold,
-  });
-
-  if (!fontsLoaded) {
-    return null;
-  }
 
   const handleUnlockLifetimeAccess = async () => {
     if (isProcessing) return;

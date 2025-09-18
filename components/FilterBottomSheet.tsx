@@ -21,7 +21,6 @@ import {
   Tag,
   CreditCard,
 } from 'lucide-react-native';
-import { useFonts, Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_700Bold } from '@expo-google-fonts/inter';
 import { useCategories } from '../hooks/useCategories';
 import AnimatedButton from './AnimatedButton';
 import { HapticService, HapticType } from '../services/hapticService';
@@ -61,12 +60,6 @@ export default function FilterBottomSheet({
   initialFilters 
 }: FilterBottomSheetProps) {
   const { categories } = useCategories();
-  const [fontsLoaded] = useFonts({
-    'Inter-Regular': Inter_400Regular,
-    'Inter-Medium': Inter_500Medium,
-    'Inter-SemiBold': Inter_600SemiBold,
-    'Inter-Bold': Inter_700Bold,
-  });
 
   const [filters, setFilters] = useState<DebtFilters>(initialFilters);
 
@@ -95,10 +88,6 @@ export default function FilterBottomSheet({
   useEffect(() => {
     setFilters(initialFilters);
   }, [initialFilters]);
-
-  if (!fontsLoaded) {
-    return null;
-  }
 
   const handleClose = () => {
     HapticService.light();

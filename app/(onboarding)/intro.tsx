@@ -9,23 +9,11 @@ import {
 } from 'react-native';
 import Animated, { FadeIn, SlideInUp } from 'react-native-reanimated';
 import { router } from 'expo-router';
-import { useFonts, Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_700Bold } from '@expo-google-fonts/inter';
 import { HapticService } from '../../services/hapticService';
 
 const { width, height } = Dimensions.get('window');
 
 export default function IntroScreen() {
-  const [fontsLoaded] = useFonts({
-    'Inter-Regular': Inter_400Regular,
-    'Inter-Medium': Inter_500Medium,
-    'Inter-SemiBold': Inter_600SemiBold,
-    'Inter-Bold': Inter_700Bold,
-  });
-
-  if (!fontsLoaded) {
-    return null;
-  }
-
   const handleGetStarted = () => {
     HapticService.light();
     router.push('/(onboarding)/intent');

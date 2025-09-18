@@ -25,7 +25,6 @@ import {
   FileText,
   Bell
 } from 'lucide-react-native';
-import { useFonts, Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_700Bold } from '@expo-google-fonts/inter';
 import CategorySelector from './CategorySelector';
 import CalendarIntegration from './CalendarIntegration';
 import NotificationSettings from './NotificationSettings';
@@ -50,12 +49,6 @@ interface AddDebtBottomSheetProps {
 export default function AddDebtBottomSheet({ visible, onClose, onDebtAdded }: AddDebtBottomSheetProps) {
   const { user, isAuthenticated } = useAuth();
   const { formatAmount, selectedCurrency } = useCurrency();
-  const [fontsLoaded] = useFonts({
-    'Inter-Regular': Inter_400Regular,
-    'Inter-Medium': Inter_500Medium,
-    'Inter-SemiBold': Inter_600SemiBold,
-    'Inter-Bold': Inter_700Bold,
-  });
 
   const [debtType, setDebtType] = useState<'owe' | 'owed'>('owe');
   const [person, setPerson] = useState('');
@@ -166,10 +159,6 @@ export default function AddDebtBottomSheet({ visible, onClose, onDebtAdded }: Ad
     HapticService.selection();
     setDebtType(type);
   };
-
-  if (!fontsLoaded) {
-    return null;
-  }
 
   return (
     <Modal

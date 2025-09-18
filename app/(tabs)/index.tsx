@@ -16,7 +16,6 @@ import Animated, {
   SlideInRight,
 } from 'react-native-reanimated';
 import { Plus, TrendingUp, TrendingDown, ArrowUpRight, ArrowDownLeft, MoveHorizontal as MoreHorizontal } from 'lucide-react-native';
-import { useFonts, Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_700Bold } from '@expo-google-fonts/inter';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useCategories } from '../../hooks/useCategories';
 import { useCurrency } from '../../hooks/useCurrency';
@@ -40,13 +39,6 @@ export default function HomeScreen() {
   // Calculate dynamic data based on fetched debts
   const currentUserName = user?.name || 'You';
   
-  const [fontsLoaded] = useFonts({
-    'Inter-Regular': Inter_400Regular,
-    'Inter-Medium': Inter_500Medium,
-    'Inter-SemiBold': Inter_600SemiBold,
-    'Inter-Bold': Inter_700Bold,
-  });
-
   // Calculate all relevant people with debt relationships
   const allRelevantPeople = useMemo(() => {
     const allPeople: Array<{
@@ -125,10 +117,6 @@ export default function HomeScreen() {
       .slice(0, 6); // Show top 6 people
   }, [debts, currentUserName, contacts]);
   
-  if (!fontsLoaded) {
-    return null;
-  }
-
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
