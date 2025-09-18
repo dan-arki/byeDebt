@@ -44,6 +44,10 @@ interface FilterBottomSheetForPersonsProps {
 function FilterBottomSheetForPersons({ visible, onClose, onApplyFilters, initialFilters }: FilterBottomSheetForPersonsProps) {
   const [filters, setFilters] = useState(initialFilters);
 
+  useEffect(() => {
+    setFilters(initialFilters);
+  }, [initialFilters]);
+
   const [fontsLoaded] = useFonts({
     'Inter-Regular': Inter_400Regular,
     'Inter-Medium': Inter_500Medium,
@@ -54,10 +58,6 @@ function FilterBottomSheetForPersons({ visible, onClose, onApplyFilters, initial
   if (!fontsLoaded) {
     return null;
   }
-
-  useEffect(() => {
-    setFilters(initialFilters);
-  }, [initialFilters]);
 
   const handleApply = () => {
     HapticService.medium();
