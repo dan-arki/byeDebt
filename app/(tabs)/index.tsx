@@ -76,6 +76,34 @@ export default function HomeScreen() {
       .slice(0, 6); // Show top 6 people
   }, [debts, currentUserName, contacts]);
 
+  // Calculate people I owe money to
+  const peopleIOwe = useMemo(() => {
+    const peopleMap = new Map<string, { name: string; totalAmount: number; contact?: any }>();
+    
+    debts
+      .filter(debt => debt.debtorName === currentUserName && debt.status !== 'paid')
+      .forEach(debt => {
+        const personName = debt.creditorName;
+        const existing = peopleMap.get(personName);
+        const newAmount = (existing?.totalAmount || 0) + debt.amount;
+        
+        // Try to find matching contact
+        const matchingContact = contacts.find(contact => 
+          contact.name.toLowerCase() === personName.toLowerCase() ||
+          `${contact.firstName} ${contact.lastName}`.toLowerCase() === personName.toLowerCase()
+        );
+        
+        peopleMap.set(personName, {
+          name: personName,
+          totalAmount: newAmount,
+          contact: matchingContact
+        });
+      });
+    
+    return Array.from(peopleMap.values())
+      .sort((a, b) => b.totalAmount - a.totalAmount)
+      .slice(0, 6); // Show top 6 people
+  }, [debts, currentUserName, contacts]);
   if (!fontsLoaded) {
     return null;
   }
@@ -105,6 +133,11 @@ export default function HomeScreen() {
   const handleNavigateToOwedDebts = () => {
     HapticService.light();
     router.push({ pathname: '/(tabs)/debts', params: { type: 'owed' } });
+  };
+
+  const handleNavigateToOweDebts = () => {
+    HapticService.light();
+    router.push({ pathname: '/(tabs)/debts', params: { type: 'owe' } });
   };
   
   const totalOwing = debts
@@ -229,6 +262,56 @@ export default function HomeScreen() {
           </Animated.View>
         )}
         {/* Recent Activity */}
+        {/* People I Owe */}
+        {!loading && peopleIOwe.length > 0 && (
+          <Animated.View style={styles.peopleContainer} entering={FadeIn.delay(700).duration(300)}>
+            <View style={styles.peopleHeader}>
+              <Text style={styles.peopleTitle}>People I owe</Text>
+              <TouchableOpacity 
+                style={styles.viewAllButton}
+                onPress={handleNavigateToOweDebts}
+              >
+                <Text style={styles.viewAllText}>View all</Text>
+              </TouchableOpacity>
+            </View>
+            
+            <ScrollView 
+              horizontal 
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.peopleScrollContent}
+              style={styles.peopleScroll}
+            >
+              {peopleIOwe.map((person, index) => (
+                <AnimatedListItem key={person.name} index={index} delay={50}>
+                  <TouchableOpacity
+                    style={styles.personCard}
+                    onPress={() => handleNavigateToPerson(person.name)}
+                    activeOpacity={0.7}
+                  >
+                    <View style={[styles.personAvatar, styles.personAvatarRed]}>
+                      {person.contact?.imageUri ? (
+                        <Image 
+                          source={{ uri: person.contact.imageUri }} 
+                          style={styles.personImage}
+                        />
+                      ) : (
+                        <Text style={styles.personInitials}>
+                          {person.name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                        </Text>
+                      )}
+                    </View>
+                    <Text style={styles.personName} numberOfLines={1}>
+                      {person.name}
+                    </Text>
+                    <Text style={[styles.personAmount, styles.personAmountRed]}>
+                      {formatAmount(person.totalAmount)}
+                    </Text>
+                  </TouchableOpacity>
+                </AnimatedListItem>
+              ))}
+            </ScrollView>
+          </Animated.View>
+        )}
         <Animated.View style={styles.activityContainer} entering={FadeIn.delay(400).duration(300)}>
           <View style={styles.activityHeader}>
             <Text style={styles.activityTitle}>Recent activity</Text>
@@ -637,6 +720,12 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter-SemiBold',
     color: '#00D632',
     textAlign: 'center',
+  },
+  personAvatarRed: {
+    borderColor: '#FF4747',
+  },
+  personAmountRed: {
+    color: '#FF4747',
   },
   emptyStateContainer: {
     alignItems: 'center',
