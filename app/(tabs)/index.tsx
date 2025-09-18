@@ -674,13 +674,9 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     overflow: 'hidden',
     borderWidth: 2,
-    borderColor: 'transparent',
   },
   personAvatarGreen: {
     borderColor: '#00D632',
-  },
-  personAvatarRed: {
-    borderColor: '#FF4747',
   },
   personImage: {
     width: 64,
@@ -706,6 +702,9 @@ const styles = StyleSheet.create({
   },
   personAmountGreen: {
     color: '#00D632',
+  },
+  personAvatarRed: {
+    borderColor: '#FF4747',
   },
   personAmountRed: {
     color: '#FF4747',
