@@ -72,8 +72,29 @@ export default function HomeScreen() {
       });
     
     return Array.from(peopleMap.values())
-      .sort((a, b) => b.totalAmount - a.totalAmount)
-      .slice(0, 6); // Show top 6 people
+      .sort((a, b) => b.totalAmount - a.totalAmount);
+  }, [debts, currentUserName, contacts]);
+
+  // Combine both lists and sort them
+  const allRelevantPeople = useMemo(() => {
+    const combined = [];
+
+    // Add people who owe you
+    peopleWhoOweYou.forEach(person => {
+      combined.push({ ...person, type: 'owed' });
+    });
+
+    // Add people you owe
+    peopleIOwe.forEach(person => {
+      combined.push({ ...person, type: 'owe' });
+    });
+
+    // Sort: 'owed' first, then 'owe'. Within each type, sort by amount descending.
+    return combined.sort((a, b) => {
+      if (a.type === 'owed' && b.type === 'owe') return -1;
+      if (a.type === 'owe' && b.type === 'owed') return 1;
+      return b.totalAmount - a.totalAmount;
+    });
   }, [debts, currentUserName, contacts]);
 
   // Calculate people I owe money to
@@ -212,13 +233,16 @@ export default function HomeScreen() {
         </Animated.View>
 
         {/* People Who Owe You */}
-        {!loading && peopleWhoOweYou.length > 0 && (
+        {!loading && allRelevantPeople.length > 0 && (
           <Animated.View style={styles.peopleContainer} entering={FadeIn.delay(600).duration(300)}>
             <View style={styles.peopleHeader}>
-              <Text style={styles.peopleTitle}>People who owe you</Text>
+              <Text style={styles.peopleTitle}>Persons</Text>
               <TouchableOpacity 
                 style={styles.viewAllButton}
-                onPress={handleNavigateToOwedDebts}
+                onPress={() => {
+                  HapticService.light();
+                  router.push('/debts');
+                }}
               >
                 <Text style={styles.viewAllText}>View all</Text>
               </TouchableOpacity>
@@ -230,14 +254,14 @@ export default function HomeScreen() {
               contentContainerStyle={styles.peopleScrollContent}
               style={styles.peopleScroll}
             >
-              {peopleWhoOweYou.map((person, index) => (
+              {allRelevantPeople.map((person, index) => (
                 <AnimatedListItem key={person.name} index={index} delay={50}>
                   <TouchableOpacity
                     style={styles.personCard}
                     onPress={() => handleNavigateToPerson(person.name)}
                     activeOpacity={0.7}
                   >
-                    <View style={styles.personAvatar}>
+                    <View style={[styles.personAvatar, person.type === 'owed' ? styles.personAvatarGreen : styles.personAvatarRed]}>
                       {person.contact?.imageUri ? (
                         <Image 
                           source={{ uri: person.contact.imageUri }} 
@@ -252,58 +276,7 @@ export default function HomeScreen() {
                     <Text style={styles.personName} numberOfLines={1}>
                       {person.name}
                     </Text>
-                    <Text style={styles.personAmount}>
-                      {formatAmount(person.totalAmount)}
-                    </Text>
-                  </TouchableOpacity>
-                </AnimatedListItem>
-              ))}
-            </ScrollView>
-          </Animated.View>
-        )}
-        {/* Recent Activity */}
-        {/* People I Owe */}
-        {!loading && peopleIOwe.length > 0 && (
-          <Animated.View style={styles.peopleContainer} entering={FadeIn.delay(700).duration(300)}>
-            <View style={styles.peopleHeader}>
-              <Text style={styles.peopleTitle}>People I owe</Text>
-              <TouchableOpacity 
-                style={styles.viewAllButton}
-                onPress={handleNavigateToOweDebts}
-              >
-                <Text style={styles.viewAllText}>View all</Text>
-              </TouchableOpacity>
-            </View>
-            
-            <ScrollView 
-              horizontal 
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.peopleScrollContent}
-              style={styles.peopleScroll}
-            >
-              {peopleIOwe.map((person, index) => (
-                <AnimatedListItem key={person.name} index={index} delay={50}>
-                  <TouchableOpacity
-                    style={styles.personCard}
-                    onPress={() => handleNavigateToPerson(person.name)}
-                    activeOpacity={0.7}
-                  >
-                    <View style={[styles.personAvatar, styles.personAvatarRed]}>
-                      {person.contact?.imageUri ? (
-                        <Image 
-                          source={{ uri: person.contact.imageUri }} 
-                          style={styles.personImage}
-                        />
-                      ) : (
-                        <Text style={styles.personInitials}>
-                          {person.name.split(' ').map(n => n[0]).join('').toUpperCase()}
-                        </Text>
-                      )}
-                    </View>
-                    <Text style={styles.personName} numberOfLines={1}>
-                      {person.name}
-                    </Text>
-                    <Text style={[styles.personAmount, styles.personAmountRed]}>
+                    <Text style={[styles.personAmount, person.type === 'owed' ? styles.personAmountGreen : styles.personAmountRed]}>
                       {formatAmount(person.totalAmount)}
                     </Text>
                   </TouchableOpacity>
